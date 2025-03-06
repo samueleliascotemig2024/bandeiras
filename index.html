@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Bandeiras do Mundo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 750px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: #4a3c8c;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .intro-screen, .continent-selection, .game-screen, .result-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .intro-screen.active, .continent-selection.active, .game-screen.active, .result-screen.active {
+            display: flex;
+        }
+        
+        .intro-text {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .start-btn, .restart-btn, .home-btn, .next-btn {
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin: 10px 0;
+            min-width: 200px;
+        }
+        
+        .start-btn:hover, .restart-btn:hover, .home-btn:hover, .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .continent-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .continent-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .continent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .continent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .continent-card:hover::before {
+            height: 100%;
+            opacity: 0.1;
+            transition: all 0.3s ease;
+        }
+        
+        .america::before { background: linear-gradient(to right, #43cea2, #185a9d); }
+        .europa::before { background: linear-gradient(to right, #ff8008, #ffc837); }
+        .asia::before { background: linear-gradient(to right, #fc4a1a, #f7b733); }
+        .africa::before { background: linear-gradient(to right, #11998e, #38ef7d); }
+        .oceania::before { background: linear-gradient(to right, #8e2de2, #4a00e0); }
+        .mundo::before { background: linear-gradient(to right, #ee0979, #ff6a00); }
+        
+        .continent-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .continent-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .continent-count {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .score-item {
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+            color: #4a3c8c;
+            font-weight: 600;
+        }
+        
+        .score-icon {
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+        
+        .flag-container {
+            height: 220px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .flag {
+            max-width: 100%;
+            max-height: 100%;
+            border: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+        
+        .option-btn {
+            background: white;
+            color: #4a3c8c;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease forwards;
+        }
+        
+        .option-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feedback {
+            min-height: 60px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .correct {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: #27ae60;
+        }
+        
+        .incorrect {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        
+        .next-btn {
+            margin-top: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .result-header {
+            background: linear-gradient(to right, #4776E6, #8E54E9);
+            color: white;
+            width: 100%;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .result-header h2 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        .result-stats {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .result-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4a3c8c;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #4a3c8c;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .home-btn {
+            background: linear-gradient(to right, #3498db, #2980b9);
+        }
+        
+        .current-continent {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a3c8c;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        @media (max-width: 600px) {
+            .continent-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes flipIn {
+            from { transform: rotateY(90deg); }
+            to { transform: rotateY(0deg); }
+        }
+        
+        .flip {
+            animation: flipIn 0.5s ease forwards;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Tela de Introdução -->
+        <div class="intro-screen active">
+            <h1>🌎 Jogo de Bandeiras do Mundo 🌍</h1>
+            <p class="intro-text">
+                Teste seus conhecimentos sobre bandeiras de países ao redor do mundo! 
+                Escolha um continente e tente identificar as bandeiras corretamente.
+            </p>
+            <button class="start-btn">Começar a Jogar</button>
+        </div>
+        
+        <!-- Tela de Seleção de Continente -->
+        <div class="continent-selection">
+            <h1>Escolha um Continente</h1>
+            <div class="continent-grid">
+                <div class="continent-card america" data-continent="americas">
+                    <div class="continent-icon">🌎</div>
+                    <div class="continent-name">Américas</div>
+                    <div class="continent-count">35 países</div>
+                </div>
+                <div class="continent-card europa" data-continent="europa">
+                    <div class="continent-icon">🏰</div>
+                    <div class="continent-name">Europa</div>
+                    <div class="continent-count">44 países</div>
+                </div>
+                <div class="continent-card asia" data-continent="asia">
+                    <div class="continent-icon">🏯</div>
+                    <div class="continent-name">Ásia</div>
+                    <div class="continent-count">48 países</div>
+                </div>
+                <div class="continent-card africa" data-continent="africa">
+                    <div class="continent-icon">🦁</div>
+                    <div class="continent-name">África</div>
+                    <div class="continent-count">54 países</div>
+                </div>
+                <div class="continent-card oceania" data-continent="oceania">
+                    <div class="continent-icon">🏝️</div>
+                    <div class="continent-name">Oceania</div>
+                    <div class="continent-count">14 países</div>
+                </div>
+                <div class="continent-card mundo" data-continent="mundo">
+                    <div class="continent-icon">🌍</div>
+                    <div class="continent-name">Mundo</div>
+                    <div class="continent-count">195 países</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tela do Jogo -->
+        <div class="game-screen">
+            <div class="current-continent" id="current-continent-label">Américas</div>
+            
+            <div class="scoreboard">
+                <div class="score-item">
+                    <span class="score-icon">🏆</span>
+                    <span>Acertos: <span id="score">0</span>/<span id="total-countries">0</span></span>
+                </div>
+                <div class="score-item">
+                    <span class="score-icon">🔥</span>
+                    <span>Streak: <span id="streak">0</span></span>
+                </div>
+            </div>
+            
+            <div class="flag-container">
+                <img id="flag-image" class="flag" src="/api/placeholder/360/200" alt="Bandeira do país">
+            </div>
+            
+            <div class="options" id="options-container">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="button-group">
+                <button class="next-btn hidden" id="next-button">Próxima Bandeira</button>
+                <button class="restart-btn" id="game-restart-button">Reiniciar</button>
+                <button class="home-btn" id="game-home-button">Voltar ao Início</button>
+            </div>
+        </div>
+        
+        <!-- Tela de Resultado -->
+        <div class="result-screen">
+            <div class="result-header">
+                <h2>Fim do Jogo!</h2>
+            </div>
+            
+            <div class="result-stats">
+                <div class="result-score"><span id="final-score">0</span>/<span id="final-total">0</span></div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="correct-answers">0</div>
+                        <div class="stat-label">Respostas Corretas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="incorrect-answers">0</div>
+                        <div class="stat-label">Respostas Incorretas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="accuracy-percentage">0%</div>
+                        <div class="stat-label">Precisão</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="max-streak">0</div>
+                        <div class="stat-label">Maior Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="continent-played">América</div>
+                        <div class="stat-label">Continente</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="restart-btn" id="restart-button">Jogar Novamente</button>
+                <button class="home-btn" id="home-button">Voltar ao Início</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Base de dados de países e suas bandeiras organizada por continentes
+        const countriesByContinent = {
+            americas: [
+                { name: "Antígua e Barbuda", flag: "https://flagcdn.com/w320/ag.png" },
+                { name: "Argentina", flag: "https://flagcdn.com/w320/ar.png" },
+                { name: "Bahamas", flag: "https://flagcdn.com/w320/bs.png" },
+                { name: "Barbados", flag: "https://flagcdn.com/w320/bb.png" },
+                { name: "Belize", flag: "https://flagcdn.com/w320/bz.png" },
+                { name: "Bolívia", flag: "https://flagcdn.com/w320/bo.png" },
+                { name: "Brasil", flag: "https://flagcdn.com/w320/br.png" },
+                { name: "Canadá", flag: "https://flagcdn.com/w320/ca.png" },
+                { name: "Chile", flag: "https://flagcdn.com/w320/cl.png" },
+                { name: "Colômbia", flag: "https://flagcdn.com/w320/co.png" },
+                { name: "Costa Rica", flag: "https://flagcdn.com/w320/cr.png" },
+                { name: "Cuba", flag: "https://flagcdn.com/w320/cu.png" },
+                { name: "Dominica", flag: "https://flagcdn.com/w320/dm.png" },
+                { name: "El Salvador", flag: "https://flagcdn.com/w320/sv.png" },
+                { name: "Equador", flag: "https://flagcdn.com/w320/ec.png" },
+                { name: "Estados Unidos", flag: "https://flagcdn.com/w320/us.png" },
+                { name: "Granada", flag: "https://flagcdn.com/w320/gd.png" },
+                { name: "Guatemala", flag: "https://flagcdn.com/w320/gt.png" },
+                { name: "Guiana", flag: "https://flagcdn.com/w320/gy.png" },
+                { name: "Haiti", flag: "https://flagcdn.com/w320/ht.png" },
+                { name: "Honduras", flag: "https://flagcdn.com/w320/hn.png" },
+                { name: "Jamaica", flag: "https://flagcdn.com/w320/jm.png" },
+                { name: "México", flag: "https://flagcdn.com/w320/mx.png" },
+                { name: "Nicarágua", flag: "https://flagcdn.com/w320/ni.png" },
+                { name: "Panamá", flag: "https://flagcdn.com/w320/pa.png" },
+                { name: "Paraguai", flag: "https://flagcdn.com/w320/py.png" },
+                { name: "Peru", flag: "https://flagcdn.com/w320/pe.png" },
+                { name: "República Dominicana", flag: "https://flagcdn.com/w320/do.png" },
+                { name: "Santa Lúcia", flag: "https://flagcdn.com/w320/lc.png" },
+                { name: "São Cristóvão e Névis", flag: "https://flagcdn.com/w320/kn.png" },
+                { name: "São Vicente e Granadinas", flag: "https://flagcdn.com/w320/vc.png" },
+                { name: "Suriname", flag: "https://flagcdn.com/w320/sr.png" },
+                { name: "Trinidad e Tobago", flag: "https://flagcdn.com/w320/tt.png" },
+                { name: "Uruguai", flag: "https://flagcdn.com/w320/uy.png" },
+                { name: "Venezuela", flag: "https://flagcdn.com/w320/ve.png" }
+            ],
+            europa: [
+                { name: "Albânia", flag: "https://flagcdn.com/w320/al.png" },
+                { name: "Alemanha", flag: "https://flagcdn.com/w320/de.png" },
+                { name: "Andorra", flag: "https://flagcdn.com/w320/ad.png" },
+                { name: "Áustria", flag: "https://flagcdn.com/w320/at.png" },
+                { name: "Bélgica", flag: "https://flagcdn.com/w320/be.png" },
+                { name: "Bielorrússia", flag: "https://flagcdn.com/w320/by.png" },
+                { name: "Bósnia e Herzegovina", flag: "https://flagcdn.com/w320/ba.png" },
+                { name: "Bulgária", flag: "https://flagcdn.com/w320/bg.png" },
+                { name: "Chipre", flag: "https://flagcdn.com/w320/cy.png" },
+                { name: "Croácia", flag: "https://flagcdn.com/w320/hr.png" },
+                { name: "Dinamarca", flag: "https://flagcdn.com/w320/dk.png" },
+                { name: "Eslováquia", flag: "https://flagcdn.com/w320/sk.png" },
+                { name: "Eslovênia", flag: "https://flagcdn.com/w320/si.png" },
+                { name: "Espanha", flag: "https://flagcdn.com/w320/es.png" },
+                { name: "Estônia", flag: "https://flagcdn.com/w320/ee.png" },
+                { name: "Finlândia", flag: "https://flagcdn.com/w320/fi.png" },
+                { name: "França", flag: "https://flagcdn.com/w320/fr.png" },
+                { name: "Grécia", flag: "https://flagcdn.com/w320/gr.png" },
+                { name: "Hungria", flag: "https://flagcdn.com/w320/hu.png" },
+                { name: "Irlanda", flag: "https://flagcdn.com/w320/ie.png" },
+                { name: "Islândia", flag: "https://flagcdn.com/w320/is.png" },
+                { name: "Itália", flag: "https://flagcdn.com/w320/it.png" },
+                { name: "Letônia", flag: "https://flagcdn.com/w320/lv.png" },
+                { name: "Liechtenstein", flag: "https://flagcdn.com/w320/li.png" },
+                { name: "Lituânia", flag: "https://flagcdn.com/w320/lt.png" },
+                { name: "Luxemburgo", flag: "https://flagcdn.com/w320/lu.png" },
+                { name: "Macedônia do Norte", flag: "https://flagcdn.com/w320/mk.png" },
+                { name: "Malta", flag: "https://flagcdn.com/w320/mt.png" },
+                { name: "Moldávia", flag: "https://flagcdn.com/w320/md.png" },
+                { name: "Mônaco", flag: "https://flagcdn.com/w320/mc.png" },
+                { name: "Montenegro", flag: "https://flagcdn.com/w320/me.png" },
+                { name: "Noruega", flag: "https://flagcdn.com/w320/no.png" },
+                { name: "Países Baixos", flag: "https://flagcdn.com/w320/nl.png" },
+                { name: "Polônia", flag: "https://flagcdn.com/w320/pl.png" },
+                { name: "Portugal", flag: "https://flagcdn.com/w320/pt.png" },
+                { name: "Reino Unido", flag: "https://flagcdn.com/w320/gb.png" },
+                { name: "República Tcheca", flag: "https://flagcdn.com/w320/cz.png" },
+                { name: "Romênia", flag: "https://flagcdn.com/w320/ro.png" },
+                { name: "Rússia", flag: "https://flagcdn.com/w320/ru.png" },
+                { name: "San Marino", flag: "https://flagcdn.com/w320/sm.png" },
+                { name: "Sérvia", flag: "https://flagcdn.com/w320/rs.png" },
+                { name: "Suécia", flag: "https://flagcdn.com/w320/se.png" },
+                { name: "Suíça", flag: "https://flagcdn.com/w320/ch.png" },
+                { name: "Ucrânia", flag: "https://flagcdn.com/w320/ua.png" }
+            ],
+            asia: [
+                { name: "Afeganistão", flag: "https://flagcdn.com/w320/af.png" },
+                { name: "Arábia Saudita", flag: "https://flagcdn.com/w320/sa.png" },
+                { name: "Armênia", flag: "https://flagcdn.com/w320/am.png" },
+                { name: "Azerbaijão", flag: "https://flagcdn.com/w320/az.png" },
+                { name: "Bahrein", flag: "https://flagcdn.com/w320/bh.png" },
+                { name: "Bangladesh", flag: "https://flagcdn.com/w320/bd.png" },
+                { name: "Brunei", flag: "https://flagcdn.com/w320/bn.png" },
+                { name: "Butão", flag: "https://flagcdn.com/w320/bt.png" },
+                { name: "Camboja", flag: "https://flagcdn.com/w320/kh.png" },
+                { name: "Catar", flag: "https://flagcdn.com/w320/qa.png" },
+                { name: "Cazaquistão", flag: "https://flagcdn.com/w320/kz.png" },
+                { name: "China", flag: "https://flagcdn.com/w320/cn.png" },
+                { name: "Chipre", flag: "https://flagcdn.com/w320/cy.png" },
+                { name: "Coreia do Norte", flag: "https://flagcdn.com/w320/kp.png" },
+                { name: "Coreia do Sul", flag: "https://flagcdn.com/w320/kr.png" },
+                { name: "Emirados Árabes Unidos", flag: "https://flagcdn.com/w320/ae.png" },
+                { name: "Filipinas", flag: "https://flagcdn.com/w320/ph.png" },
+                { name: "Geórgia", flag: "https://flagcdn.com/w320/ge.png" },
+                { name: "Iêmen", flag: "https://flagcdn.com/w320/ye.png" },
+                { name: "Índia", flag: "https://flagcdn.com/w320/in.png" },
+                { name: "Indonésia", flag: "https://flagcdn.com/w320/id.png" },
+                { name: "Irã", flag: "https://flagcdn.com/w320/ir.png" },
+                { name: "Iraque", flag: "https://flagcdn.com/w320/iq.png" },
+                { name: "Israel", flag: "https://flagcdn.com/w320/il.png" },
+                { name: "Japão", flag: "https://flagcdn.com/w320/jp.png" },
+                { name: "Jordânia", flag: "https://flagcdn.com/w320/jo.png" },
+                { name: "Kuwait", flag: "https://flagcdn.com/w320/kw.png" },
+                { name: "Laos", flag: "https://flagcdn.com/w320/la.png" },
+                { name: "Líbano", flag: "https://flagcdn.com/w320/lb.png" },
+                { name: "Malásia", flag: "https://flagcdn.com/w320/my.png" },
+                { name: "Maldivas", flag: "https://flagcdn.com/w320/mv.png" },
+                { name: "Mongólia", flag: "https://flagcdn.com/w320/mn.png" },
+                { name: "Myanmar", flag: "https://flagcdn.com/w320/mm.png" },
+                { name: "Nepal", flag: "https://flagcdn.com/w320/np.png" },
+                { name: "Omã", flag: "https://flagcdn.com/w320/om.png" },
+                { name: "Paquistão", flag: "https://flagcdn.com/w320/pk.png" },
+                { name: "Quirguistão", flag: "https://flagcdn.com/w320/kg.png" },
+                { name: "Rússia", flag: "https://flagcdn.com/w320/ru.png" },
+                { name: "Singapura", flag: "https://flagcdn.com/w320/sg.png" },
+                { name: "Síria", flag: "https://flagcdn.com/w320/sy.png" },
+                { name: "Sri Lanka", flag: "https://flagcdn.com/w320/lk.png" },
+                { name: "Tadjiquistão", flag: "https://flagcdn.com/w320/tj.png" },
+                { name: "Tailândia", flag: "https://flagcdn.com/w320/th.png" },
+                { name: "Timor-Leste", flag: "https://flagcdn.com/w320/tl.png" },
+                { name: "Turcomenistão", flag: "https://flagcdn.com/w320/tm.png" },
+                { name: "Turquia", flag: "https://flagcdn.com/w320/tr.png" },
+                { name: "Uzbequistão", flag: "https://flagcdn.com/w320/uz.png" },
+                { name: "Vietnã", flag: "https://flagcdn.com/w320/vn.png" }
+            ],
+            africa: [
+                { name: "África do Sul", flag: "https://flagcdn.com/w320/za.png" },
+                { name: "Argélia", flag: "https://flagcdn.com/w320/dz.png" },
+                { name: "Angola", flag: "https://flagcdn.com/w320/ao.png" },
+                { name: "Benim", flag: "https://flagcdn.com/w320/bj.png" },
+                { name: "Botsuana", flag: "https://flagcdn.com/w320/bw.png" },
+                { name: "Burkina Faso", flag: "https://flagcdn.com/w320/bf.png" },
+                { name: "Burundi", flag: "https://flagcdn.com/w320/bi.png" },
+                { name: "Cabo Verde", flag: "https://flagcdn.com/w320/cv.png" },
+                { name: "Camarões", flag: "https://flagcdn.com/w320/cm.png" },
+                { name: "Chade", flag: "https://flagcdn.com/w320/td.png" },
+                { name: "Comores", flag: "https://flagcdn.com/w320/km.png" },
+                { name: "Congo", flag: "https://flagcdn.com/w320/cg.png" },
+                { name: "Costa do Marfim", flag: "https://flagcdn.com/w320/ci.png" },
+                { name: "Djibouti", flag: "https://flagcdn.com/w320/dj.png" },
+                { name: "Egito", flag: "https://flagcdn.com/w320/eg.png" },
+                { name: "Eritreia", flag: "https://flagcdn.com/w320/er.png" },
+                { name: "Eswatini", flag: "https://flagcdn.com/w320/sz.png" },
+                { name: "Etiópia", flag: "https://flagcdn.com/w320/et.png" },
+                { name: "Gabão", flag: "https://flagcdn.com/w320/ga.png" },
+                { name: "Gâmbia", flag: "https://flagcdn.com/w320/gm.png" },
+                { name: "Gana", flag: "https://flagcdn.com/w320/gh.png" },
+                { name: "Guiné", flag: "https://flagcdn.com/w320/gn.png" },
+                { name: "Guiné-Bissau", flag: "https://flagcdn.com/w320/gw.png" },
+                { name: "Guiné Equatorial", flag: "https://flagcdn.com/w320/gq.png" },
+                { name: "Lesoto", flag: "https://flagcdn.com/w320/ls.png" },
+                { name: "Libéria", flag: "https://flagcdn.com/w320/lr.png" },
+                { name: "Líbia", flag: "https://flagcdn.com/w320/ly.png" },
+                { name: "Madagascar", flag: "https://flagcdn.com/w320/mg.png" },
+                { name: "Malawi", flag: "https://flagcdn.com/w320/mw.png" },
+                { name: "Mali", flag: "https://flagcdn.com/w320/ml.png" },
+                { name: "Marrocos", flag: "https://flagcdn.com/w320/ma.png" },
+                { name: "Maurícia", flag: "https://flagcdn.com/w320/mu.png" },
+                { name: "Mauritânia", flag: "https://flagcdn.com/w320/mr.png" },
+                { name: "Moçambique", flag: "https://flagcdn.com/w320/mz.png" },
+                { name: "Namíbia", flag: "https://flagcdn.com/w320/na.png" },
+                { name: "Níger", flag: "https://flagcdn.com/w320/ne.png" },
+                { name: "Nigéria", flag: "https://flagcdn.com/w320/ng.png" },
+                { name: "Quênia", flag: "https://flagcdn.com/w320/ke.png" },
+                { name: "República Centro-Africana", flag: "https://flagcdn.com/w320/cf.png" },
+                { name: "República Democrática do Congo", flag: "https://flagcdn.com/w320/cd.png" },
+                { name: "Ruanda", flag: "https://flagcdn.com/w320/rw.png" },
+                { name: "São Tomé e Príncipe", flag: "https://flagcdn.com/w320/st.png" },
+                { name: "Senegal", flag: "https://flagcdn.com/w320/sn.png" },
+                { name: "Seicheles", flag: "https://flagcdn.com/w320/sc.png" },
+                { name: "Serra Leoa", flag: "https://flagcdn.com/w320/sl.png" },
+                { name: "Somália", flag: "https://flagcdn.com/w320/so.png" },
+                { name: "Sudão", flag: "https://flagcdn.com/w320/sd.png" },
+                { name: "Sudão do Sul", flag: "https://flagcdn.com/w320/ss.png" },
+                { name: "Tanzânia", flag: "https://flagcdn.com/w320/tz.png" },
+                { name: "Togo", flag: "https://flagcdn.com/w320/tg.png" },
+                { name: "Tunísia", flag: "https://flagcdn.com/w320/tn.png" },
+                { name: "Uganda", flag: "https://flagcdn.com/w320/ug.png" },
+                { name: "Zâmbia", flag: "https://flagcdn.com/w320/zm.png" },
+                { name: "Zimbábue", flag: "https://flagcdn.com/w320/zw.png" }
+            ],
+            oceania: [
+                { name: "Austrália", flag: "https://flagcdn.com/w320/au.png" },
+                { name: "Fiji", flag: "https://flagcdn.com/w320/fj.png" },
+                { name: "Ilhas Marshall", flag: "https://flagcdn.com/w320/mh.png" },
+                { name: "Ilhas Salomão", flag: "https://flagcdn.com/w320/sb.png" },
+                { name: "Kiribati", flag: "https://flagcdn.com/w320/ki.png" },
+                { name: "Micronésia", flag: "https://flagcdn.com/w320/fm.png" },
+                { name: "Nauru", flag: "https://flagcdn.com/w320/nr.png" },
+                { name: "Nova Zelândia", flag: "https://flagcdn.com/w320/nz.png" },
+                { name: "Palau", flag: "https://flagcdn.com/w320/pw.png" },
+                { name: "Papua Nova Guiné", flag: "https://flagcdn.com/w320/pg.png" },
+                { name: "Samoa", flag: "https://flagcdn.com/w320/ws.png" },
+                { name: "Tonga", flag: "https://flagcdn.com/w320/to.png" },
+                { name: "Tuvalu", flag: "https://flagcdn.com/w320/tv.png" },
+                { name: "Vanuatu", flag: "https://flagcdn.com/w320/vu.png" }
+            ]
+        };
+        
+        // Combinar todos os países para a opção "Mundo"
+        countriesByContinent.mundo = [
+            ...countriesByContinent.americas,
+            ...countriesByContinent.europa,
+            ...countriesByContinent.asia,
+            ...countriesByContinent.africa,
+            ...countriesByContinent.oceania
+        ];
+        
+        // Mapeamento de IDs de continentes para nomes em português
+        const continentNames = {
+            americas: "Américas",
+            europa: "Europa",
+            asia: "Ásia",
+            africa: "África",
+            oceania: "Oceania",
+            mundo: "Mundo"
+        };
+
+        // Variáveis globais do jogo
+        let currentContinent = null;
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let maxStreak = 0;
+        let correctAnswer = null;
+        let usedCountries = [];
+        let totalCountries = 0;
+
+        // Elementos DOM
+        const introScreen = document.querySelector('.intro-screen');
+        const continentScreen = document.querySelector('.continent-selection');
+        const gameScreen = document.querySelector('.game-screen');
+        const resultScreen = document.querySelector('.result-screen');
+        const startBtn = document.querySelector('.start-btn');
+        const continentCards = document.querySelectorAll('.continent-card');
+        const flagImage = document.getElementById('flag-image');
+        const optionsContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-button');
+        const scoreDisplay = document.getElementById('score');
+        const totalCountriesDisplay = document.getElementById('total-countries');
+        const streakDisplay = document.getElementById('streak');
+        const currentContinentLabel = document.getElementById('current-continent-label');
+        const restartButton = document.getElementById('restart-button');
+        const homeButton = document.getElementById('home-button');
+        const gameRestartButton = document.getElementById('game-restart-button');
+        const gameHomeButton = document.getElementById('game-home-button');
+
+        // Event Listeners
+        startBtn.addEventListener('click', showContinentSelection);
+        continentCards.forEach(card => card.addEventListener('click', startGame));
+        nextButton.addEventListener('click', nextQuestion);
+        restartButton.addEventListener('click', restartGame);
+        homeButton.addEventListener('click', returnToHome);
+        gameRestartButton.addEventListener('click', restartGameFromGameScreen);
+        gameHomeButton.addEventListener('click', returnToHomeFromGameScreen);
+
+        // Funções do jogo
+        function showContinentSelection() {
+            introScreen.classList.remove('active');
+            continentScreen.classList.add('active');
+            continentScreen.classList.add('fade-in');
+        }
+
+        function startGame(e) {
+            currentContinent = e.currentTarget.dataset.continent;
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            maxStreak = 0;
+            usedCountries = [];
+            totalCountries = countriesByContinent[currentContinent].length;
+            scoreDisplay.textContent = score;
+            totalCountriesDisplay.textContent = totalCountries;
+            streakDisplay.textContent = streak;
+            currentContinentLabel.textContent = continentNames[currentContinent];
+            
+            continentScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            gameScreen.classList.add('fade-in');
+            
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestion >= totalCountries) {
+                showResults();
+                return;
+            }
+
+            currentQuestion++;
+            nextButton.classList.add('hidden');
+            feedback.textContent = '';
+            feedback.classList.remove('correct', 'incorrect');
+            
+            // Selecionar país aleatório não usado
+            const availableCountries = countriesByContinent[currentContinent].filter(
+                country => !usedCountries.includes(country.name)
+            );
+            
+            if (availableCountries.length === 0) {
+                showResults();
+                return;
+            }
+
+            const randomIndex = Math.floor(Math.random() * availableCountries.length);
+            const selectedCountry = availableCountries[randomIndex];
+            usedCountries.push(selectedCountry.name);
+            correctAnswer = selectedCountry.name;
+            
+            // Carregar bandeira com animação
+            flagImage.src = selectedCountry.flag;
+            flagImage.classList.add('flip', 'pulse');
+            setTimeout(() => flagImage.classList.remove('flip'), 500);
+
+            // Gerar opções
+            const options = generateOptions(selectedCountry);
+            displayOptions(options);
+        }
+
+        function generateOptions(correctCountry) {
+            const options = [correctCountry.name];
+            const allCountries = countriesByContinent[currentContinent].map(c => c.name);
+            
+            while (options.length < 4) {
+                const randomCountry = allCountries[Math.floor(Math.random() * allCountries.length)];
+                if (!options.includes(randomCountry) && randomCountry !== correctCountry.name) {
+                    options.push(randomCountry);
+                }
+            }
+            
+            return shuffleArray(options);
+        }
+
+        function displayOptions(options) {
+            optionsContainer.innerHTML = '';
+            options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.classList.add('option-btn');
+                btn.textContent = option;
+                btn.addEventListener('click', checkAnswer);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(e) {
+            const selectedAnswer = e.target.textContent;
+            const optionButtons = document.querySelectorAll('.option-btn');
+            
+            optionButtons.forEach(btn => btn.disabled = true);
+            
+            if (selectedAnswer === correctAnswer) {
+                score++;
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+                scoreDisplay.textContent = score;
+                streakDisplay.textContent = streak;
+                feedback.innerHTML = 'Correto! <span class="score-icon">🎉</span>';
+                feedback.classList.add('correct');
+                e.target.style.background = '#27ae60';
+            } else {
+                streak = 0;
+                streakDisplay.textContent = streak;
+                feedback.innerHTML = `Errado! A resposta correta era ${correctAnswer} <span class="score-icon">😕</span>`;
+                feedback.classList.add('incorrect');
+                e.target.style.background = '#e74c3c';
+            }
+            
+            nextButton.classList.remove('hidden');
+            flagImage.classList.remove('pulse');
+        }
+
+        function nextQuestion() {
+            loadQuestion();
+        }
+
+        function showResults() {
+            gameScreen.classList.remove('active');
+            resultScreen.classList.add('active');
+            resultScreen.classList.add('fade-in');
+            
+            const finalScore = document.getElementById('final-score');
+            const finalTotal = document.getElementById('final-total');
+            const correctAnswers = document.getElementById('correct-answers');
+            const incorrectAnswers = document.getElementById('incorrect-answers');
+            const accuracyPercentage = document.getElementById('accuracy-percentage');
+            const maxStreakDisplay = document.getElementById('max-streak');
+            const continentPlayed = document.getElementById('continent-played');
+            
+            finalScore.textContent = score;
+            finalTotal.textContent = totalCountries;
+            correctAnswers.textContent = score;
+            incorrectAnswers.textContent = totalCountries - score;
+            accuracyPercentage.textContent = `${Math.round((score / totalCountries) * 100)}%`;
+            maxStreakDisplay.textContent = maxStreak;
+            continentPlayed.textContent = continentNames[currentContinent];
+        }
+
+        function restartGame() {
+            resultScreen.classList.remove('active');
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            maxStreak = 0;
+            usedCountries = [];
+            scoreDisplay.textContent = score;
+            streakDisplay.textContent = streak;
+            gameScreen.classList.add('active');
+            loadQuestion();
+        }
+
+        function restartGameFromGameScreen() {
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            maxStreak = 0;
+            usedCountries = [];
+            scoreDisplay.textContent = score;
+            streakDisplay.textContent = streak;
+            loadQuestion();
+        }
+
+        function returnToHome() {
+            resultScreen.classList.remove('active');
+            introScreen.classList.add('active');
+            introScreen.classList.add('fade-in');
+        }
+
+        function returnToHomeFromGameScreen() {
+            gameScreen.classList.remove('active');
+            introScreen.classList.add('active');
+            introScreen.classList.add('fade-in');
+        }
+
+        // Função auxiliar para embaralhar array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+    </script>
+</body>
+</html>
