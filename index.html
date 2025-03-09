@@ -168,6 +168,7 @@
         .score-icon {
             margin-right: 10px;
             font-size: 1.4rem;
+            cursor: pointer; /* Adicionado para indicar que é clicável */
         }
         
         .flag-container {
@@ -379,6 +380,16 @@
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes blink {
+            0% { background-color: white; }
+            50% { background-color: #9b988a; }
+            100% { background-color: white; }
+        }
+        
+        .blink {
+            animation: blink 0.2s ease 1;
         }
     </style>
 </head>
@@ -761,6 +772,7 @@
         const homeButton = document.getElementById('home-button');
         const gameRestartButton = document.getElementById('game-restart-button');
         const gameHomeButton = document.getElementById('game-home-button');
+        const trophyIcon = document.querySelector('.scoreboard .score-item:first-child .score-icon');
 
         // Event Listeners
         startBtn.addEventListener('click', showContinentSelection);
@@ -770,6 +782,7 @@
         homeButton.addEventListener('click', returnToHome);
         gameRestartButton.addEventListener('click', restartGameFromGameScreen);
         gameHomeButton.addEventListener('click', returnToHomeFromGameScreen);
+        trophyIcon.addEventListener('click', revealCorrectAnswer);
 
         // Funções do jogo
         function showContinentSelection() {
@@ -884,6 +897,16 @@
             
             nextButton.classList.remove('hidden');
             flagImage.classList.remove('pulse');
+        }
+
+        function revealCorrectAnswer() {
+            const optionButtons = document.querySelectorAll('.option-btn');
+            optionButtons.forEach(btn => {
+                if (btn.textContent === correctAnswer && !btn.disabled) {
+                    btn.classList.add('blink');
+                    setTimeout(() => btn.classList.remove('blink'), 1000);
+                }
+            });
         }
 
         function nextQuestion() {
