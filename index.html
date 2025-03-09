@@ -15,13 +15,14 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
-            padding: 20px;
+            padding: 15px; /* Reduzido para mobile */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             color: #333;
+            overflow-y: auto; /* Rolagem suave */
         }
         
         .container {
@@ -30,7 +31,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 750px;
-            padding: 30px;
+            padding: 20px; /* Ajustado para mobile */
             text-align: center;
             position: relative;
             overflow: hidden;
@@ -38,8 +39,8 @@
         
         h1 {
             color: #4a3c8c;
-            margin-bottom: 20px;
-            font-size: 2.5rem;
+            margin-bottom: 15px; /* Reduzido */
+            font-size: 2rem; /* Ajustado para mobile */
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
         
@@ -56,9 +57,9 @@
         }
         
         .intro-text {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
+            font-size: 1.1rem; /* Ajustado para mobile */
+            margin-bottom: 20px;
+            line-height: 1.5;
             color: #555;
         }
         
@@ -67,13 +68,14 @@
             color: white;
             border: none;
             border-radius: 50px;
-            padding: 15px 30px;
-            font-size: 1.2rem;
+            padding: 12px 25px; /* Ajustado para facilitar toque */
+            font-size: 1.1rem; /* Aumentado */
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            margin: 10px 0;
-            min-width: 200px;
+            margin: 8px 0;
+            min-width: 180px; /* Ajustado */
+            touch-action: manipulation; /* Melhor resposta ao toque */
         }
         
         .start-btn:hover, .restart-btn:hover, .home-btn:hover, .next-btn:hover {
@@ -84,15 +86,15 @@
         .continent-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 15px; /* Reduzido para mobile */
             width: 100%;
-            margin-top: 20px;
+            margin-top: 15px;
         }
         
         .continent-card {
             background: white;
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px; /* Reduzido */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -113,7 +115,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 8px;
+            height: 6px;
             border-radius: 15px 15px 0 0;
         }
         
@@ -131,18 +133,18 @@
         .mundo::before { background: linear-gradient(to right, #ee0979, #ff6a00); }
         
         .continent-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
+            font-size: 2rem; /* Ajustado */
+            margin-bottom: 10px;
         }
         
         .continent-name {
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* Ajustado */
             margin-bottom: 5px;
         }
         
         .continent-count {
-            font-size: 0.9rem;
+            font-size: 0.8rem; /* Ajustado */
             color: #777;
         }
         
@@ -150,9 +152,9 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Reduzido */
             background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
+            padding: 10px; /* Reduzido */
             border-radius: 50px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
@@ -160,24 +162,24 @@
         .score-item {
             display: flex;
             align-items: center;
-            font-size: 1.1rem;
+            font-size: 1rem; /* Ajustado */
             color: #4a3c8c;
             font-weight: 600;
         }
         
         .score-icon {
-            margin-right: 10px;
-            font-size: 1.4rem;
-            cursor: pointer; /* Adicionado para indicar que é clicável */
+            margin-right: 8px;
+            font-size: 1.3rem; /* Ajustado */
+            cursor: pointer;
         }
         
         .flag-container {
-            height: 220px;
+            height: 180px; /* Reduzido para mobile */
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px; /* Reduzido */
             position: relative;
             perspective: 1000px;
         }
@@ -186,7 +188,7 @@
             max-width: 100%;
             max-height: 100%;
             border: none;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             transition: transform 0.5s;
             transform-style: preserve-3d;
@@ -195,9 +197,9 @@
         .options {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 10px; /* Reduzido */
             width: 100%;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         .option-btn {
@@ -205,27 +207,29 @@
             color: #4a3c8c;
             border: 2px solid #e0e0e0;
             border-radius: 50px;
-            padding: 15px;
-            font-size: 1rem;
+            padding: 12px; /* Ajustado para toque */
+            font-size: 1rem; /* Aumentado */
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             animation: slideIn 0.3s ease forwards;
+            min-height: 50px; /* Para facilitar toque */
+            touch-action: manipulation;
         }
         
-        .option-btn:hover {
+        .option-btn:hover, .option-btn:active {
             background: #f8f9fa;
             transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         
         .feedback {
-            min-height: 60px;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
+            min-height: 50px; /* Reduzido */
+            margin-bottom: 15px;
+            font-size: 1.1rem; /* Ajustado */
             font-weight: bold;
-            padding: 15px;
+            padding: 10px;
             border-radius: 10px;
             width: 100%;
             display: flex;
@@ -244,7 +248,7 @@
         }
         
         .next-btn {
-            margin-top: 10px;
+            margin-top: 8px;
         }
         
         .hidden {
@@ -255,47 +259,47 @@
             background: linear-gradient(to right, #4776E6, #8E54E9);
             color: white;
             width: 100%;
-            padding: 20px;
+            padding: 15px; /* Reduzido */
             border-radius: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .result-header h2 {
             margin: 0;
-            font-size: 2rem;
+            font-size: 1.8rem; /* Ajustado */
         }
         
         .result-stats {
             display: flex;
             flex-direction: column;
             width: 100%;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .result-score {
-            font-size: 3rem;
+            font-size: 2.5rem; /* Ajustado */
             font-weight: bold;
             color: #4a3c8c;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 10px; /* Reduzido */
             width: 100%;
         }
         
         .stat-card {
             background: white;
             border-radius: 10px;
-            padding: 15px;
+            padding: 12px; /* Reduzido */
             text-align: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         
         .stat-value {
-            font-size: 1.8rem;
+            font-size: 1.5rem; /* Ajustado */
             font-weight: bold;
             color: #4a3c8c;
             margin-bottom: 5px;
@@ -303,12 +307,12 @@
         
         .stat-label {
             color: #777;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         
         .button-group {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -319,32 +323,40 @@
         
         .current-continent {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             background: rgba(255,255,255,0.9);
-            padding: 5px 15px;
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.8rem; /* Ajustado */
             font-weight: 600;
             color: #4a3c8c;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         
         @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
             .continent-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr; /* Uma coluna em mobile */
             }
-            
             .options {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr; /* Uma coluna para opções */
+                gap: 8px;
             }
-            
             .button-group {
                 flex-direction: column;
             }
-            
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.6rem; /* Menor ainda em mobile */
+            }
+            .flag-container {
+                height: 150px; /* Ainda menor */
+            }
+            .option-btn {
+                font-size: 0.9rem;
+                padding: 10px;
             }
         }
         
@@ -753,6 +765,11 @@
         let usedCountries = [];
         let totalCountries = 0;
 
+        // Efeitos sonoros
+        const correctSound = new Audio('https://www.soundjay.com/buttons/sounds/beep-01a.mp3');
+        const incorrectSound = new Audio('https://www.soundjay.com/buttons/sounds/beep-02.mp3');
+        const clickSound = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
+
         // Elementos DOM
         const introScreen = document.querySelector('.intro-screen');
         const continentScreen = document.querySelector('.continent-selection');
@@ -775,14 +792,38 @@
         const trophyIcon = document.querySelector('.scoreboard .score-item:first-child .score-icon');
 
         // Event Listeners
-        startBtn.addEventListener('click', showContinentSelection);
-        continentCards.forEach(card => card.addEventListener('click', startGame));
-        nextButton.addEventListener('click', nextQuestion);
-        restartButton.addEventListener('click', restartGame);
-        homeButton.addEventListener('click', returnToHome);
-        gameRestartButton.addEventListener('click', restartGameFromGameScreen);
-        gameHomeButton.addEventListener('click', returnToHomeFromGameScreen);
-        trophyIcon.addEventListener('click', revealCorrectAnswer);
+        startBtn.addEventListener('click', () => {
+            clickSound.play();
+            showContinentSelection();
+        });
+        continentCards.forEach(card => card.addEventListener('click', (e) => {
+            clickSound.play();
+            startGame(e);
+        }));
+        nextButton.addEventListener('click', () => {
+            clickSound.play();
+            nextQuestion();
+        });
+        restartButton.addEventListener('click', () => {
+            clickSound.play();
+            restartGame();
+        });
+        homeButton.addEventListener('click', () => {
+            clickSound.play();
+            returnToHome();
+        });
+        gameRestartButton.addEventListener('click', () => {
+            clickSound.play();
+            restartGameFromGameScreen();
+        });
+        gameHomeButton.addEventListener('click', () => {
+            clickSound.play();
+            returnToHomeFromGameScreen();
+        });
+        trophyIcon.addEventListener('click', () => {
+            clickSound.play();
+            revealCorrectAnswer();
+        });
 
         // Funções do jogo
         function showContinentSelection() {
@@ -822,7 +863,6 @@
             feedback.textContent = '';
             feedback.classList.remove('correct', 'incorrect');
             
-            // Selecionar país aleatório não usado
             const availableCountries = countriesByContinent[currentContinent].filter(
                 country => !usedCountries.includes(country.name)
             );
@@ -837,12 +877,10 @@
             usedCountries.push(selectedCountry.name);
             correctAnswer = selectedCountry.name;
             
-            // Carregar bandeira com animação
             flagImage.src = selectedCountry.flag;
             flagImage.classList.add('flip', 'pulse');
             setTimeout(() => flagImage.classList.remove('flip'), 500);
 
-            // Gerar opções
             const options = generateOptions(selectedCountry);
             displayOptions(options);
         }
@@ -867,7 +905,10 @@
                 const btn = document.createElement('button');
                 btn.classList.add('option-btn');
                 btn.textContent = option;
-                btn.addEventListener('click', checkAnswer);
+                btn.addEventListener('click', (e) => {
+                    clickSound.play();
+                    checkAnswer(e);
+                });
                 optionsContainer.appendChild(btn);
             });
         }
@@ -887,12 +928,14 @@
                 feedback.innerHTML = 'Correto! <span class="score-icon">🎉</span>';
                 feedback.classList.add('correct');
                 e.target.style.background = '#27ae60';
+                correctSound.play();
             } else {
                 streak = 0;
                 streakDisplay.textContent = streak;
                 feedback.innerHTML = `Errado! A resposta correta era ${correctAnswer} <span class="score-icon">😕</span>`;
                 feedback.classList.add('incorrect');
                 e.target.style.background = '#e74c3c';
+                incorrectSound.play();
             }
             
             nextButton.classList.remove('hidden');
